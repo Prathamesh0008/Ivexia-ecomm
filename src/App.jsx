@@ -1,35 +1,75 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { CartProvider } from "./components/cart/CartContext";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Navbar from "./components/Navbar";
+import ProductsPage from "./pages/ProductsPage";
+import CartDrawer from "./components/CartDrawer";
+
+import OrdersPage from "./pages/OrdersPage";
+import OrderDetails from "./pages/OrderDetails";
+import AdminOrders from "./pages/AdminOrders";
+import OrderSuccess from "./pages/OrderSuccess";
+import IvexiaBlog from "./components/IvexiaBlog";
+import Footer from "./components/Footer";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import HomePage from "./pages/HomePage";
+
+import ProductDetails from "./components/ProductDetails"
+// Wrapper to detect pathname
+function AppLayout() {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const location = useLocation();
+
+  // Apply background ONLY on /products
+  const isProductsPage = location.pathname === "/products";
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    
+    <div
+      className={`min-h-screen w-full ${
+        isProductsPage ? "product-page-bg" : "default-bg"
+      }`}
+    >
+      <Navbar onOpenCart={() => setIsCartOpen(true)} />
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+        />
+      <main className=" w-full pt-[95px] sm:pt-[95px] md:pt-[95px] lg:pt-[153px]  ">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/product/:id" element={<ProductDetails></ProductDetails>} />
+           <Route path="/orders" element={<OrdersPage />} />
+           <Route path="/blog" element={<IvexiaBlog></IvexiaBlog>} />
+           <Route path="/terms" element={<Terms></Terms>} />
+           <Route path="/policy" element={<Privacy></Privacy>} />
+           <Route path="/contact" element={<Contact></Contact>} />
+           <Route path="/about" element={<About></About>} />
+          <Route path="/orders/:orderId" element={<OrderDetails />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+
+        </Routes>
+      </main>
+      <Footer></Footer>
+    </div>
+  );
 }
 
-export default App
+export default function App() {
+  
+  return (
+    <CartProvider>
+    <BrowserRouter>
+      <AppLayout />
+    </BrowserRouter>
+    </CartProvider>
+    
+  );
+}
