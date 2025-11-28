@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useCart } from "./cart/CartContext";
+import PRODUCTS from "../data/Products.mock";
+import { useNavigate } from "react-router-dom";
+
 
 const LOGO = "/src/assets/logo/ivexiaa-logoo.png";
 const USER = "/src/assets/logo/user.png";
@@ -15,6 +18,37 @@ export default function Navbar({ onOpenCart }) {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [query, setQuery] = useState("");
+const [results, setResults] = useState([]);
+const navigate = useNavigate();
+
+const handleSearch = (val) => {
+  setQuery(val);
+
+  if (!val.trim()) {
+    setResults([]);
+    return;
+  }
+
+  const q = val.toLowerCase();
+
+  const matched = PRODUCTS.filter(
+    (p) =>
+      p.name.toLowerCase().includes(q) ||
+      (p.category || "").toLowerCase().includes(q)
+  );
+
+  setResults(matched.length > 0 ? matched : ["not-found"]);
+};
+
+const openProduct = (item) => {
+  setQuery("");
+  setResults([]);
+  setSearchOpen(false);
+  navigate(`/product/${item.slug || item.id}`);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 
   const lastScroll = useRef(typeof window !== "undefined" ? window.scrollY : 0);
 
@@ -102,24 +136,50 @@ export default function Navbar({ onOpenCart }) {
           </Link>
 
           {/* DESKTOP SEARCH */}
-          <div className="hidden lg:flex flex-1 justify-center px-6">
-            <div
-              className="w-full max-w-lg flex items-center rounded-full px-4 py-1.5"
-              style={{
-                background: "rgba(255,255,255,0.1)",
-                border: `1px solid ${NEON_BORDER}`,
-                backdropFilter: "blur(6px)",
-              }}
-            >
-              <input
-                className="flex-1 bg-transparent outline-none text-[13px] text-pink-200"
-                placeholder="Search performance medicines…"
-              />
-              <button className="px-4 py-1.5 rounded-full text-[12px] font-semibold bg-pink-600 text-white">
-                Search
-              </button>
-            </div>
-          </div>
+        {/* DESKTOP SEARCH */}
+<div className="hidden lg:flex flex-1 justify-center px-6 relative">
+  <div
+    className="w-full max-w-lg flex items-center rounded-full px-4 py-1.5"
+    style={{
+      background: "rgba(255,255,255,0.1)",
+      border: "1px solid rgba(255,0,90,0.35)",
+      backdropFilter: "blur(6px)",
+    }}
+  >
+    <input
+      value={query}
+      onChange={(e) => handleSearch(e.target.value)}
+      className="flex-1 bg-transparent outline-none text-[13px] text-pink-200"
+      placeholder="Search performance medicines…"
+    />
+  </div>
+
+  {/* SUGGESTIONS DROPDOWN */}
+  {results.length > 0 && (
+    <div className="absolute top-12 w-full max-w-lg rounded-xl 
+      bg-[#120a1d] border border-pink-500/30 shadow-xl z-[999] p-2">
+
+      {results[0] === "not-found" ? (
+        <div className="text-center py-3 text-pink-200 text-sm">
+          No products found
+        </div>
+      ) : (
+        results.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => openProduct(item)}
+            className="w-full text-left px-3 py-2 text-sm text-pink-100
+              hover:bg-pink-600/20 rounded-lg transition"
+          >
+            {item.name}
+          </button>
+        ))
+      )}
+
+    </div>
+  )}
+</div>
+
 
           {/* RIGHT SIDE ICONS */}
           <div className="flex items-center gap-3">
@@ -202,52 +262,123 @@ export default function Navbar({ onOpenCart }) {
       </header>
 
       {/* ================= MOBILE MENU ================= */}
-      {mobileMenu && (
-        <div className="fixed inset-0 bg-black/50 z-[80]" onClick={() => setMobileMenu(false)}>
-          <aside
-            className="absolute bg-[#0b0d12] top-0 bottom-0 w-72 p-6 border-r border-pink-600/30"
-            onClick={(e) => e.stopPropagation()}
+{mobileMenu && (
+  <div
+    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80]"
+    onClick={() => setMobileMenu(false)}
+  >
+    <aside
+      className={`absolute top-0 bottom-0 right-0 w-80 p-6 
+      bg-[#100818]/95 backdrop-blur-xl 
+      border-l border-pink-500/40 shadow-2xl
+      transform transition-transform duration-300
+      ${mobileMenu ? "translate-x-0" : "translate-x-full"}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+
+      {/* LOGO + CLOSE */}
+      <div className="flex items-center justify-between mb-6">
+        <img src={LOGO} className="h-12 drop-shadow-[0_0_10px_rgba(236,72,153,.5)]" />
+        <button
+          onClick={() => setMobileMenu(false)}
+          className="text-pink-300 text-3xl hover:text-pink-400"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* MENU LINKS */}
+      <nav className="flex flex-col gap-5 text-pink-100 text-lg font-semibold">
+        <Link to="/" onClick={() => setMobileMenu(false)} className="text-white">Home</Link>
+        <Link to="/products" onClick={() => setMobileMenu(false) }className="text-white">Products</Link>
+        <Link to="/about" onClick={() => setMobileMenu(false)} className="text-white">About</Link>
+        <Link to="/blog" onClick={() => setMobileMenu(false)} className="text-white">Blog</Link>
+        <Link to="/contact" onClick={() => setMobileMenu(false) }className="text-white">Contact</Link>
+        <Link to="/orders" onClick={() => setMobileMenu(false) }className="text-white">Orders</Link>
+      </nav>
+
+      {/* ======== LANGUAGE DROPDOWN ======== */}
+      <div className="mt-8">
+        <button
+          onClick={() => setLangOpen((prev) => !prev)}
+          className="w-full flex items-center justify-between px-4 py-3 
+          rounded-lg bg-[#1a0b24] text-pink-200 border border-pink-600/40 
+          text-sm font-semibold hover:bg-pink-600/20 transition"
+        >
+          🌐 Language
+          <span className="text-pink-300">{langOpen ? "▲" : "▼"}</span>
+        </button>
+
+        {/* DROPDOWN LIST */}
+        {langOpen && (
+          <div
+            className="mt-2 rounded-lg bg-[#150a1f] border border-pink-600/30 
+            shadow-xl overflow-hidden animate-fadeIn"
           >
-            <img src={LOGO} className="h-12 mb-6" />
+            {languages.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => {
+                  changeLang(l.code);
+                  setLangOpen(false);
+                  setMobileMenu(false);
+                }}
+                className="w-full px-4 py-2 text-left text-pink-100 text-sm 
+                hover:bg-pink-600/20 transition"
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </aside>
+  </div>
+)}
 
-            <div className="flex flex-col gap-4 text-pink-200 text-[16px] font-semibold">
-              <Link to="/" onClick={() => setMobileMenu(false)}>Home</Link>
-              <Link to="/products" onClick={() => setMobileMenu(false)}>Products</Link>
-              <Link to="/about" onClick={() => setMobileMenu(false)}>About</Link>
-              <Link to="/blog" onClick={() => setMobileMenu(false)}>Blog</Link>
-              <Link to="/contact" onClick={() => setMobileMenu(false)}>Contact</Link>
-            </div>
 
-            <div className="mt-6 border-t border-pink-500/30 pt-4">
-              <p className="text-xs text-pink-300 mb-2">Language</p>
-              <div className="grid grid-cols-2 gap-2">
-                {languages.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => changeLang(l.code)}
-                    className="px-3 py-2 rounded-lg bg-pink-600/20 text-sm text-pink-100 border border-pink-500/30"
-                  >
-                    {l.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </aside>
-        </div>
-      )}
 
       {/* ================= MOBILE SEARCH OVERLAY ================= */}
-      {searchOpen && (
-        <div className="fixed inset-0 bg-black/40 z-[80]" onClick={() => setSearchOpen(false)}>
-          <div className="bg-[#120a1d] mt-24 mx-5 p-5 rounded-xl border border-pink-500/30 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}>
-            <input
-              className="w-full bg-transparent text-pink-200 text-sm px-4 py-3 border border-pink-500/40 rounded-lg outline-none"
-              placeholder="Search products…"
-            />
-          </div>
+     {/* MOBILE SEARCH OVERLAY */}
+{searchOpen && (
+  <div className="fixed inset-0 bg-black/40 z-[80]" onClick={() => setSearchOpen(false)}>
+    <div
+      className="bg-[#120a1d] mt-24 mx-5 p-5 rounded-xl border border-pink-500/30 shadow-2xl"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <input
+        value={query}
+        onChange={(e) => handleSearch(e.target.value)}
+        className="w-full bg-transparent text-pink-200 text-sm px-4 py-3 border border-pink-500/40 rounded-lg outline-none"
+        placeholder="Search products…"
+      />
+
+      {/* Mobile dropdown */}
+      {results.length > 0 && (
+        <div className="mt-2 rounded-xl bg-[#0b0d12] border border-pink-500/30">
+
+          {results[0] === "not-found" ? (
+            <div className="text-center py-3 text-pink-200 text-sm">
+              No products found
+            </div>
+          ) : (
+            results.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => openProduct(item)}
+                className="w-full text-left px-4 py-2 text-sm text-pink-100 hover:bg-pink-600/20 rounded-lg"
+              >
+                {item.name}
+              </button>
+            ))
+          )}
+
         </div>
       )}
+    </div>
+  </div>
+)}
+
     </>
   );
 }

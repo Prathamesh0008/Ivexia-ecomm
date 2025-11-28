@@ -154,7 +154,7 @@ function ProductTabs({ product }) {
   };
 
   return (
-    <div>
+    <div >
       {/* TAB BUTTONS */}
       <div className="flex gap-3 overflow-auto pb-3 border-b border-white/10">
         {tabs.map((t) => (

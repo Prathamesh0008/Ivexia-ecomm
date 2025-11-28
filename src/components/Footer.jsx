@@ -66,10 +66,10 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-bold mb-4 text-pink-300">Company</h3>
           <ul className="space-y-2 text-slate-300 text-sm">
-            <li><Link to="/about" className="hover:text-white">About Us</Link></li>
-            <li><Link to="/blog" className="hover:text-white">Blog</Link></li>
-            <li><Link to="/careers" className="hover:text-white">Careers</Link></li>
-            <li><Link to="/orders" className="hover:text-white">Orders</Link></li>
+            <li><Link to="/about" className="text-white hover:text-pink-400">About Us</Link></li>
+            <li><Link to="/blog" className="text-white hover:text-pink-400">Blog</Link></li>
+            <li><Link to="/careers" className="text-white hover:text-pink-400">Careers</Link></li>
+            <li><Link to="/orders" className="text-white hover:text-pink-400">Orders</Link></li>
           </ul>
         </div>
 
@@ -77,17 +77,17 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-bold mb-4 text-pink-300">Support</h3>
           <ul className="space-y-2 text-slate-300 text-sm">
-            <li><Link to="/contact" className="hover:text-white">Contact Us</Link></li>
-            <li><Link to="/terms" className="hover:text-white">Terms & Conditions</Link></li>
-            <li><Link to="/policy" className="hover:text-white">Privacy Policy</Link></li>
+            <li><Link to="/contact" className="text-white hover:text-pink-400">Contact Us</Link></li>
+            <li><Link to="/terms" className="text-white hover:text-pink-400">Terms & Conditions</Link></li>
+            <li><Link to="/policy" className="text-white hover:text-pink-400">Privacy Policy</Link></li>
           </ul>
 
           {/* Social Icons */}
           <div className="mt-6 flex gap-4 text-xl">
-            <a className="hover:text-pink-400 cursor-pointer"><FaFacebookF /></a>
-            <a className="hover:text-pink-400 cursor-pointer"><FaInstagram /></a>
-            <a className="hover:text-pink-400 cursor-pointer"><FaTwitter /></a>
-            <a className="hover:text-pink-400 cursor-pointer"><FaLinkedinIn /></a>
+            <a className="text-white hover:text-pink-400 cursor-pointer"><FaFacebookF /></a>
+            <a className="text-white hover:text-pink-400 cursor-pointer"><FaInstagram /></a>
+            <a className="text-white hover:text-pink-400 cursor-pointer"><FaTwitter /></a>
+            <a className="text-white hover:text-pink-400 cursor-pointer"><FaLinkedinIn /></a>
           </div>
         </div>
       </div>

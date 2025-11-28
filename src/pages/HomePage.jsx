@@ -1,14 +1,154 @@
 // src/pages/HomePage.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FINISHED_PRODUCTS from "../data/Products.mock";
 import bold from "../assets/bold.png";
-import banner from "../assets/banner 1.jpg"
+import banner from "../assets/banner 1.jpg";
+
+// === Black Friday / Promo Slider ===
+// === Black Friday / Promo Slider (With Background Images) ===
+function BlackFridaySlider({ onShopClick }) {
+  const slides = [
+    {
+      id: 1,
+      badge: "Black Friday",
+      title: "UP TO 25% OFF · ED PORTFOLIO",
+      subtitle:
+        "Select strengths & SKUs for bulk B2B orders during the Black Friday window.",
+      tag: "Limited time · B2B only",
+      image:
+        "https://wallpapers.oneindia.com/ph-1024x768/2017/11/mia-khalifa_1510989398160.jpg",
+    },
+    {
+      id: 2,
+      badge: "Bundle Offer",
+      title: "BUY 2 GET 1 FREE · ORAL JELLIES",
+      subtitle:
+        "High-rotation jellies & softgels ideal for performance-wellness lines.",
+      tag: "Ask team for eligible SKUs",
+      image:
+        "https://www.potencia.to/images/couple-04.jpg",
+    },
+    {
+      id: 3,
+      badge: "New Launch",
+      title: "NEW STRENGTHS & PACK DESIGNS",
+      subtitle:
+        "Refresh your catalog with updated packs, SKUs and export-ready branding.",
+      tag: "Ivexia performance range",
+      image:
+        "https://images.pexels.com/photos/3987227/pexels-photo-3987227.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    },
+  ];
+
+  const [current, setCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(id);
+  }, [slides.length]);
+
+  const goTo = (index) => setCurrent(index);
+  const next = () => setCurrent((prev) => (prev + 1) % slides.length);
+  const prev = () =>
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl border border-pink-500/30 bg-[#050816] shadow-[0_0_35px_rgba(236,72,153,0.25)]">
+      {/* SLIDES WRAPPER */}
+      <div
+        className="flex transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
+        {slides.map((slide) => (
+          <div
+            key={slide.id}
+            className="min-w-full h-40 sm:h-48 lg:h-56 relative"
+          >
+            {/* Background Image */}
+            <img
+              src={slide.image}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-[#0b1220]/70 to-black/85" />
+
+            {/* CONTENT */}
+            <div className="relative z-10 h-full flex items-center justify-between px-4 sm:px-8">
+              <div>
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-black/40 border border-pink-300/60 text-[11px] font-semibold uppercase tracking-wide text-pink-200 mb-1">
+                  🖤 {slide.badge}
+                </div>
+
+                <h3 className="text-base sm:text-lg lg:text-xl font-extrabold text-white">
+                  {slide.title}
+                </h3>
+
+                <p className="mt-1 text-[12px] sm:text-sm text-slate-200/90 max-w-xl">
+                  {slide.subtitle}
+                </p>
+
+                <p className="mt-1 text-[11px] text-slate-300/90">
+                  {slide.tag}
+                </p>
+              </div>
+
+              {/* Right side: CTA + Arrows */}
+              <div className="hidden sm:flex items-center gap-3">
+                {onShopClick && (
+                  <button
+                    onClick={onShopClick}
+                    className="px-4 py-2 rounded-full bg-pink-600 text-white text-xs font-semibold hover:bg-pink-500 hover:shadow-[0_0_22px_rgba(236,72,153,0.7)] transition"
+                  >
+                    View Deals
+                  </button>
+                )}
+
+                <button
+                  onClick={prev}
+                  className="w-8 h-8 rounded-full border border-slate-500/70 bg-black/30 flex items-center justify-center text-slate-200 hover:border-pink-400 hover:text-pink-300 transition text-xs"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={next}
+                  className="w-8 h-8 rounded-full border border-slate-500/70 bg-black/30 flex items-center justify-center text-slate-200 hover:border-pink-400 hover:text-pink-300 transition text-xs"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DOTS */}
+      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2 z-20">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goTo(index)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              current === index
+                ? "w-5 bg-pink-400"
+                : "w-2 bg-slate-500/70 hover:bg-pink-300/70"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
 
-  const featuredProducts = (FINISHED_PRODUCTS || []).slice(0, 8);
+  // Use your JSON data
+  const featuredProducts = (FINISHED_PRODUCTS || []).slice(0, 12);
 
   const categories = [
     { key: "sildenafil", label: "Sildenafil Range" },
@@ -23,10 +163,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100">
-
-      {/* ============ HERO SECTION (NEON NIGHT) ============ */}
-      <section className="relative w-full overflow-hidden">
-        {/* Blurred background hero image */}
+      
+      {/* <section className="relative w-full overflow-hidden">
+        
         <div className="absolute inset-0 ">
           <img
             src="https://wallpapers.oneindia.com/ph-1024x768/2017/11/mia-khalifa_1510989398160.jpg"
@@ -35,12 +174,12 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Gradient overlay */}
+        
         <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-[#0b1220]/90 to-[#020617]/95" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-16 pb-16 lg:pt-20 lg:pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            {/* Left hero text */}
+          
             <div>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-pink-500/40 text-[11px] font-semibold tracking-wide uppercase">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -61,7 +200,7 @@ export default function HomePage() {
                 and performance wellness brands.
               </p>
 
-              {/* Hero highlights */}
+              
               <div className="mt-6 grid grid-cols-3 gap-3 max-w-md text-[11px] sm:text-xs">
                 <div className="rounded-2xl bg-white/5 border border-[#233554] px-3 py-3 backdrop-blur-md">
                   <div className="font-semibold text-pink-300">50+ SKUs</div>
@@ -85,7 +224,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Hero CTAs */}
+              
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   onClick={() => navigate("/products")}
@@ -103,7 +242,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right hero stats / floating card */}
+            
             <div className="relative">
               <div className="absolute -top-10 right-0 w-40 h-40 bg-pink-500/30 blur-3xl rounded-full" />
               <div className="absolute -bottom-10 left-4 w-40 h-40 bg-cyan-500/25 blur-3xl rounded-full" />
@@ -154,137 +293,290 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* ============ CATEGORY STRIP (NEON PILLS) ============ */}
+      {/* ============ OFFER SLIDER + CATEGORY STRIP ============ */}
+  
+
+      {/* ============ BLACK FRIDAY SLIDER + CATEGORY STRIP ============ */}
       <section className="border-y border-[#1e293b] bg-[#020617]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-wrap gap-2 items-center">
-          <span className="text-xs sm:text-sm font-semibold text-slate-300 mr-2">
-            Browse by category:
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.key}
-                onClick={() =>
-                  navigate("/products", { state: { category: cat.key } })
-                }
-                className="px-3 py-1.5 rounded-full bg-white/5 border border-[#233554] text-[11px] sm:text-xs text-slate-100 hover:border-pink-500 hover:text-pink-300 hover:shadow-[0_0_18px_rgba(236,72,153,0.6)] transition"
-              >
-                {cat.label}
-              </button>
-            ))}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 space-y-4">
+          {/* Black Friday / Promo Slider */}
+          <BlackFridaySlider onShopClick={() => navigate("/products")} />
+
+          {/* Category buttons (unchanged styling) */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs sm:text-sm font-semibold text-slate-300 mr-2">
+              Browse by category:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat.key}
+                  onClick={() =>
+                    navigate("/products", { state: { category: cat.key } })
+                  }
+                  className="px-3 py-1.5 rounded-full bg-white/5 border border-[#233554] text-[11px] sm:text-xs text-slate-100 hover:border-pink-500 hover:text-pink-300 hover:shadow-[0_0_18px_rgba(236,72,153,0.6)] transition"
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ============ FEATURED PRODUCTS (GLASS CARDS) ============ */}
-      <section className="py-10 sm:py-12 bg-[#020617]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white">
-                Featured performance medicines
-              </h2>
-              <p className="text-sm text-slate-300 mt-1 max-w-xl">
-                Handpicked strengths and brands with consistent demand across
-                international markets.
-              </p>
-            </div>
+    <section className="border-y border-[#1e293b] bg-[#020617] mb-1">
+        {/* ---- OFFER SLIDER ---- */}
+        <div className="w-full overflow-hidden border-b border-[#1e293b]">
+          <div className="whitespace-nowrap overflow-hidden animate-scroll-offers py-2">
+            {/* REPEATED TEXT FOR LOOPING EFFECT */}
+            <span className="mx-6 text-[13px] text-pink-300 font-semibold tracking-wide">
+              🔥 BLACK FRIDAY SALE — UP TO 25% OFF ON SELECT STRENGTHS
+            </span>
 
-            <button
-              onClick={() => navigate("/products")}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-pink-500/60 text-sm text-pink-200 hover:bg-pink-600/20 hover:shadow-[0_0_20px_rgba(236,72,153,0.6)] transition"
-            >
-              View full catalog
-            </button>
+            <span className="mx-6 text-[13px] text-cyan-300 font-semibold tracking-wide">
+              💊 BUY 2 GET 1 FREE · LIMITED TIME OFFER
+            </span>
+
+            <span className="mx-6 text-[13px] text-purple-300 font-semibold tracking-wide">
+              🚚 FREE SHIPPING FOR BULK B2B ORDERS
+            </span>
+
+            <span className="mx-6 text-[13px] text-emerald-300 font-semibold tracking-wide">
+              ⚡ NEW ORAL JELLY RANGE RELEASED
+            </span>
+
+            {/* duplicate for infinite scroll */}
+            <span className="mx-6 text-[13px] text-pink-300 font-semibold tracking-wide">
+              🔥 BLACK FRIDAY SALE — UP TO 25% OFF ON SELECT STRENGTHS
+            </span>
+
+            <span className="mx-6 text-[13px] text-cyan-300 font-semibold tracking-wide">
+              💊 BUY 2 GET 1 FREE · LIMITED TIME OFFER
+            </span>
+
+            <span className="mx-6 text-[13px] text-purple-300 font-semibold tracking-wide">
+              🚚 FREE SHIPPING FOR BULK B2B ORDERS
+            </span>
+
+            <span className="mx-6 text-[13px] text-emerald-300 font-semibold tracking-wide">
+              ⚡ NEW ORAL JELLY RANGE RELEASED
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ TOP STORE BANNER (POTENCIA STYLE) ============ */}
+      <section className="w-full bg-[#0b1220] border-b border-[#1e293b]">
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg sm:text-xl font-bold text-white">
+              Premium ED & Performance Portfolio
+            </h1>
+            <p className="text-[12px] text-slate-300 mt-1">
+              Tablets · Softgels · Jellies · Combinations · Export-ready
+            </p>
           </div>
 
-          {/* GRID */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            {featuredProducts.map((p) => (
-              <div
-                key={p.id}
-                className="group rounded-2xl border border-[#1e293b] bg-white/5 backdrop-blur-xl shadow-[0_15px_35px_rgba(15,23,42,0.8)] hover:shadow-[0_0_32px_rgba(236,72,153,0.7)] hover:-translate-y-1 transition flex flex-col overflow-hidden"
-              >
-                {/* Image */}
-                <div className="h-28 sm:h-32 bg-gradient-to-br from-[#020617] via-[#0b1220] to-[#111827] flex items-center justify-center overflow-hidden">
-                  {p.image ? (
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition"
-                    />
-                  ) : (
-                    <div className="text-[11px] text-slate-400 px-3 text-center">
-                      Product image placeholder
-                    </div>
-                  )}
+          <button
+            onClick={() => navigate("/products")}
+            className="px-5 py-2 rounded-full bg-gradient-to-r from-pink-600 to-pink-500 text-white text-sm font-semibold hover:scale-[1.02] hover:shadow-[0_0_18px_rgba(236,72,153,0.6)] transition"
+          >
+            Browse full catalog
+          </button>
+        </div>
+      </section>
+
+      
+
+      {/* ============ MAIN SHOP: SIDEBAR + PRODUCT GRID (LIKE POTENCIA) ============ */}
+      <section className="py-10 bg-[#020617]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* LEFT SIDEBAR (FILTERS) */}
+            <aside className="w-full sm:w-56 lg:w-64 flex-shrink-0">
+              <div className="sticky top-24 rounded-2xl bg-gradient-to-b from-[#0b1220] to-[#020617] border border-[#233554] shadow-xl p-5">
+                <h3 className="text-lg font-bold mb-4 tracking-wide">
+                  Filter Products
+                </h3>
+
+                {/* Categories */}
+                <div className="mb-6">
+                  <p className="text-xs uppercase text-slate-400 mb-2 tracking-wider">
+                    Category
+                  </p>
+                  <div className="space-y-2">
+                    {categories.map((c) => (
+                      <button
+                        key={c.key}
+                        onClick={() =>
+                          navigate("/products", { state: { category: c.key } })
+                        }
+                        className="w-full text-left px-3 py-2 rounded-lg bg-white/5 border border-[#1e293b] hover:border-pink-500 hover:text-pink-300 transition text-sm text-slate-200"
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Body */}
-                <div className="px-3.5 sm:px-4 py-3 flex-1 flex flex-col">
-                  <div className="text-[11px] uppercase tracking-wide text-pink-400 font-semibold line-clamp-1">
-                    {p.category}
-                  </div>
-                  <div className="text-sm sm:text-[15px] font-semibold text-slate-50 mt-1 line-clamp-2">
-                    {p.name}
-                  </div>
-                  {p.dosage && (
-                    <div className="mt-1 text-xs text-slate-300">
-                      Strength: {p.dosage}
-                    </div>
-                  )}
-                  {p.form && (
-                    <div className="mt-0.5 text-[11px] text-slate-400">
-                      Form: {p.form}
-                    </div>
-                  )}
-
-                  {/* Tag row */}
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {p.pack_size && (
-                      <span className="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-[#233554] text-slate-200">
-                        {p.pack_size}
+                {/* Potency Chips */}
+                <div className="mb-6">
+                  <p className="text-xs uppercase text-slate-400 mb-2 tracking-wider">
+                    Potency snapshot
+                  </p>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    {strengths.map((pot) => (
+                      <span
+                        key={pot}
+                        className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 hover:bg-pink-600/40 hover:border-pink-400 cursor-default text-center transition duration-200"
+                      >
+                        {pot}
                       </span>
-                    )}
-                    {p.cas_id && (
-                      <span className="text-[10px] px-2 py-1 rounded-full bg-pink-600/20 border border-pink-500/50 text-pink-200">
-                        CAS: {p.cas_id}
-                      </span>
-                    )}
+                    ))}
                   </div>
+                </div>
 
-                  {/* CTA */}
-                  <button
-                    onClick={() =>
-                      navigate(`/product/${p.slug || p.id || ""}`)
-                    }
-                    className="mt-3 inline-flex items-center justify-center px-3 py-1.5 rounded-full bg-pink-600 text-white text-xs sm:text-[13px] font-semibold hover:bg-pink-500 hover:shadow-[0_0_20px_rgba(236,72,153,0.7)] transition"
-                  >
-                    View details
-                  </button>
+                {/* Forms */}
+                <div className="mb-6">
+                  <p className="text-xs uppercase text-slate-400 mb-2 tracking-wider">
+                    Forms available
+                  </p>
+
+                  <div className="space-y-2 text-sm">
+                    {[
+                      "Tablet",
+                      "Softgel capsule",
+                      "Oral jelly",
+                      "Chewable",
+                      "Injection",
+                    ].map((f) => (
+                      <div
+                        key={f}
+                        className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg border border-white/5"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        {f}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Promo Card */}
+                <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-pink-700 to-red-600 shadow-2xl">
+                  <h4 className="font-semibold text-sm">High-demand lines</h4>
+                  <p className="text-xs mt-1 text-pink-50">
+                    Focus on confidence, intimacy & performance wellness with
+                    pharma-grade quality and discreet presentation.
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </aside>
 
-          {/* Strength Chips */}
-          <div className="mt-6 border-t border-[#1e293b] pt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-slate-300">
-                Popular strengths:
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {strengths.map((s) => (
-                <span
-                  key={s}
-                  className="px-3 py-1 rounded-full bg-white/5 text-[11px] sm:text-xs text-slate-100 border border-[#1e293b]"
-                >
-                  {s}
-                </span>
-              ))}
+            {/* RIGHT PRODUCT GRID (JSON-BASED FEATURED PRODUCTS) */}
+            <div className="lg:col-span-3">
+              {/* Top heading (like category title) */}
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white">
+                    Featured performance medicines
+                  </h2>
+                  <p className="text-sm text-slate-300 mt-1 max-w-xl">
+                    Selected SKUs with consistent repeat demand in ED &
+                    performance-care markets.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1.5 rounded-full bg-white/5 border border-[#233554] text-[11px] sm:text-xs text-slate-100">
+                    B2B only
+                  </span>
+                  <span className="px-3 py-1.5 rounded-full bg-white/5 border border-[#233554] text-[11px] sm:text-xs text-slate-100">
+                    Export ready
+                  </span>
+                </div>
+              </div>
+
+              {/* PRODUCT CARDS */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-3 gap-6">
+                {featuredProducts.map((p, index) => (
+                  <div
+                    key={p.id || index}
+                    className="relative cursor-pointer group rounded-2xl border border-[#1e293b] bg-white/5 backdrop-blur-xl shadow-[0_10px_25px_rgba(15,23,42,0.7)] hover:shadow-[0_0_25px_rgba(236,72,153,0.7)] hover:-translate-y-1 transition overflow-hidden"
+                    onClick={() => navigate(`/product/${p.slug || p.id}`)}
+                  >
+                    {/* Optional badge like Potencia (top left) */}
+                    <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-pink-600/90 text-[10px] font-semibold text-white uppercase tracking-wide">
+                      Top line
+                    </div>
+
+                    {/* IMAGE */}
+                    <div className="h-32 bg-gradient-to-br from-[#020617] via-[#0b1220] to-[#111827] flex items-center justify-center">
+                      {p.image ? (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition"
+                        />
+                      ) : (
+                        <div className="text-[11px] text-slate-400 px-3 text-center">
+                          Product image placeholder
+                        </div>
+                      )}
+                    </div>
+
+                    {/* BODY */}
+                    <div className="p-4">
+                      <p className="text-[11px] uppercase tracking-wide text-pink-400 font-semibold line-clamp-1">
+                        {p.category}
+                      </p>
+
+                      <p className="text-sm font-semibold text-white mt-1 line-clamp-2">
+                        {p.name}
+                      </p>
+
+                      {p.dosage && (
+                        <p className="text-xs text-slate-300 mt-1">
+                          Strength: {p.dosage}
+                        </p>
+                      )}
+
+                      {p.form && (
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          Form: {p.form}
+                        </p>
+                      )}
+
+                      {/* FOOTER TAGS */}
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {p.pack_size && (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-[#233554] text-slate-200">
+                            {p.pack_size}
+                          </span>
+                        )}
+                        {p.cas_id && (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-pink-600/20 border border-pink-500/50 text-pink-200">
+                            CAS: {p.cas_id}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* CTA ROW (VIEW DETAILS – like product page button) */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/${p.slug || p.id}`);
+                        }}
+                        className="mt-3 inline-flex items-center justify-center w-full px-3 py-1.5 rounded-full bg-pink-600 text-white text-xs sm:text-[13px] font-semibold hover:bg-pink-500 hover:shadow-[0_0_20px_rgba(236,72,153,0.7)] transition"
+                      >
+                        View details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -298,8 +590,8 @@ export default function HomePage() {
               Why distributors choose Ivexia
             </h2>
             <p className="mt-2 text-sm text-slate-300">
-              Designed for serious B2B buyers, exporters and pharmacy chains
-              who need consistent supply, compliance and quality.
+              Designed for serious B2B buyers, exporters and pharmacy chains who
+              need consistent supply, compliance and quality.
             </p>
           </div>
 
@@ -312,8 +604,8 @@ export default function HomePage() {
                 Assured Potency & Purity
               </h3>
               <p className="mt-2 text-sm text-slate-300">
-                Each batch passes robust analytical testing for assay, uniformity
-                and impurities.
+                Each batch passes robust analytical testing for assay,
+                uniformity and impurities.
               </p>
             </div>
 
@@ -362,7 +654,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              <h2 className="text-2xl sm:3xl font-bold text-white">
                 Simple, export-ready ordering flow
               </h2>
               <p className="mt-2 text-sm text-slate-300 max-w-md">
@@ -438,7 +730,9 @@ export default function HomePage() {
               </h3>
               <ul className="space-y-2 text-sm text-slate-200">
                 <li>• 25 mg to 200 mg strengths across major APIs.</li>
-                <li>• Tablets, softgel capsules, oral jelly and chewable forms.</li>
+                <li>
+                  • Tablets, softgel capsules, oral jelly and chewable forms.
+                </li>
                 <li>• Competitive MOQs for new markets & distributors.</li>
                 <li>• Stability data and COA available for key lines.</li>
                 <li>• Option for multilingual packaging on request.</li>

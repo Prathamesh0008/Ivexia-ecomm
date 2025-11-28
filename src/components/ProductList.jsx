@@ -283,12 +283,12 @@ export default function ProductsPage() {
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
   return (
-    <div className="min-h-screen w-full bg-[#0b0d12] text-white overflow-x-hidden ">
+    <div className="min-h-screen w-full bg-[#0b0d12] text-white overflow-x-hidden  ">
       {/* Romantic Strip */}
 
       {/* HERO */}
       {/* <PremiumHero /> */}
-<AdPopup />
+      <AdPopup />
 
       <RomanticStrip />
 
@@ -296,9 +296,9 @@ export default function ProductsPage() {
         {/* Couple Banner */}
         <CoupleBanner />
 
-        <div className="mt-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="mt-10 grid grid-cols-1 lg:grid-cols-4 gap-8 ">
           {/* Sidebar */}
-          <aside className="w-full sm:w-56 lg:w-64 flex-shrink-0">
+          <aside className="w-full sm:w-56 lg:w-64 flex-shrink-0 sm:w-full">
             <div className="sticky top-24 rounded-2xl bg-gradient-to-b from-[#0b1220] to-[#020617] border border-[#233554] shadow-xl p-5">
               <h3 className="text-lg font-bold mb-4 tracking-wide">
                 Filter Products
@@ -384,7 +384,7 @@ export default function ProductsPage() {
 
           {/* Products */}
           <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:ml-5">
               {pageItems.map((p) => (
                 <ProductCard
                   key={p.id}

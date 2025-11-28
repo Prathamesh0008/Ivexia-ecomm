@@ -55,3 +55,15 @@ button {
     margin-top: 10px;
   }
 }
+
+
+/* Advertising on home page */
+
+@keyframes offerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-scroll-offers {
+  animation: offerScroll 15s linear infinite;
+}

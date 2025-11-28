@@ -32,68 +32,76 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Overlay (glass blur) */}
+      {/* Blur overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[900] animate-fadeIn"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[900] animate-fadeIn"
           onClick={onClose}
-        ></div>
+        />
       )}
 
-      {/* Drawer Panel */}
+      {/* Drawer */}
       <div
-        className={`fixed inset-y-0 right-0 w-full sm:w-96 bg-white/95 backdrop-blur-xl shadow-2xl z-[999]
-        rounded-l-3xl border-l border-[#d7e9ff]
+        className={`fixed inset-y-0 right-0 w-full sm:w-96 
+        bg-[#020617]/95 backdrop-blur-xl border-l border-[#1e293b] 
+        shadow-[0_0_30px_rgba(236,72,153,0.3)] z-[999]
+        rounded-l-3xl neon-border
         transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        {/* HEADER */}
+
+        {/* Header */}
         <div
           className="px-5 py-4 flex items-center justify-between sticky top-0 z-[1000]
-        bg-gradient-to-r from-[#eaf3ff] to-[#f7faff]
-        border-b border-[#d7e9ff]"
+        bg-[#0b1220]/90 backdrop-blur-md border-b border-[#1e293b]"
         >
-          <h2 className="text-lg font-bold text-[#0d2d47]">Your Cart</h2>
+          <h2 className="text-lg font-bold text-white tracking-wide">
+            Your Cart
+          </h2>
+
           <button
             onClick={onClose}
-            className="text-xl text-[#1d4d7c] hover:text-[#0d2d47] transition transform hover:scale-110"
+            className="text-xl text-pink-400 hover:text-pink-300 transition hover:scale-110"
           >
             ✕
           </button>
         </div>
 
-        {/* CART ITEMS */}
+        {/* Items */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
           {items.length === 0 ? (
-            <p className="text-gray-500 text-sm text-center mt-4">
+            <p className="text-slate-400 text-sm text-center mt-4">
               Your cart is empty.
             </p>
           ) : (
             items.map((item) => (
               <div
                 key={item.id}
-                className="rounded-xl border border-[#e1edff] p-4 shadow-sm bg-white hover:shadow-md transition"
+                className="rounded-2xl border border-[#1e293b] bg-white/5 backdrop-blur-xl 
+                shadow-[0_10px_25px_rgba(15,23,42,0.7)] p-4 hover:shadow-[0_0_25px_rgba(236,72,153,0.4)] 
+                transition"
               >
                 <div className="flex gap-3">
-                  {/* Thumbnail */}
+                  {/* Image */}
                   {item.image ? (
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-20 h-20 rounded-lg object-cover border border-[#d7e9ff]"
+                      className="w-20 h-20 rounded-xl object-cover border border-[#1e293b]"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                    <div className="w-20 h-20 rounded-xl bg-[#1e293b] flex items-center justify-center text-slate-400 text-xs">
                       No Image
                     </div>
                   )}
 
                   {/* Info */}
                   <div className="flex-1">
-                    <h3 className="font-semibold text-sm text-[#0d2d47]">
+                    <h3 className="font-semibold text-sm text-white">
                       {item.name}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
+
+                    <p className="text-xs text-slate-400 mt-1">
                       ₹{item.price.toFixed(2)}
                     </p>
 
@@ -101,20 +109,20 @@ export default function CartDrawer({ isOpen, onClose }) {
                     <div className="flex items-center gap-3 mt-3">
                       <button
                         onClick={() => updateQty(item.id, item.qty - 1)}
-                        className="w-7 h-7 rounded-full bg-[#eaf3ff] text-[#0d2d47] border border-[#cfe6ff]
-                      hover:bg-[#d9eaff] transition"
+                        className="w-8 h-8 rounded-full bg-white/5 border border-[#1e293b] 
+                        text-slate-200 hover:bg-pink-600/30 hover:border-pink-400 transition"
                       >
                         –
                       </button>
 
-                      <span className="text-sm font-semibold w-5 text-center">
+                      <span className="text-sm font-semibold text-white">
                         {item.qty}
                       </span>
 
                       <button
                         onClick={() => updateQty(item.id, item.qty + 1)}
-                        className="w-7 h-7 rounded-full bg-[#eaf3ff] text-[#0d2d47] border border-[#cfe6ff]
-                      hover:bg-[#d9eaff] transition"
+                        className="w-8 h-8 rounded-full bg-white/5 border border-[#1e293b] 
+                        text-slate-200 hover:bg-pink-600/30 hover:border-pink-400 transition"
                       >
                         +
                       </button>
@@ -122,10 +130,9 @@ export default function CartDrawer({ isOpen, onClose }) {
                   </div>
                 </div>
 
-                {/* Remove Button */}
                 <button
                   onClick={() => removeItem(item.id)}
-                  className="text-xs text-red-500 mt-3 hover:text-red-600"
+                  className="text-xs text-pink-400 mt-3 hover:text-pink-300"
                 >
                   Remove
                 </button>
@@ -134,27 +141,28 @@ export default function CartDrawer({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* BOTTOM SECTION */}
-        <div className="p-5 border-t border-[#d7e9ff] bg-white/90 backdrop-blur-md rounded-b-3xl shadow-inner sticky bottom-0">
-          <div className="flex justify-between text-sm text-gray-700">
+        {/* Summary */}
+        <div className="p-5 border-t border-[#1e293b] bg-[#0b1220]/80 backdrop-blur-xl rounded-b-3xl shadow-inner">
+          <div className="flex justify-between text-sm text-slate-300">
             <span>Subtotal</span>
             <span>₹{subtotal.toFixed(2)}</span>
           </div>
 
-          <div className="flex justify-between text-sm text-gray-700 mt-2">
+          <div className="flex justify-between text-sm text-slate-300 mt-2">
             <span>Shipping</span>
             <span>₹{shipping.toFixed(2)}</span>
           </div>
 
-          <div className="flex justify-between font-bold text-[#0d2d47] mt-3 text-lg">
+          <div className="flex justify-between font-bold text-white mt-4 text-lg">
             <span>Total</span>
-            <span>₹{total.toFixed(2)}</span>
+            <span className="text-pink-400">₹{total.toFixed(2)}</span>
           </div>
 
           <button
             onClick={handlePlaceOrder}
-            className="w-full mt-5 px-5 py-3 rounded-xl bg-[#1d4d7c] text-white font-semibold
-          hover:bg-[#123a61] transition shadow-md"
+            className="w-full mt-5 px-5 py-3 rounded-xl 
+            bg-gradient-to-r from-pink-600 to-pink-500 text-white font-semibold
+            hover:shadow-[0_0_26px_rgba(236,72,153,0.6)] transition"
           >
             Place Order
           </button>
